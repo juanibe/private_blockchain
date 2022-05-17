@@ -38,18 +38,23 @@ class Block {
     let self = this;
     return new Promise((resolve, reject) => {
       // Save in auxiliary variable the current block hash
-      const currentBlockHash = self.hash;
+      const currentHash = self.hash;
+
+      // Make the hash of the block as null
+      self.hash = null;
 
       // Recalculate the hash of the Block
-      const recalculatedHash = this.encryptSHA256({
+      const newHash = this.encryptSHA256({
         height: self.height,
         body: self.body,
         time: self.time,
         previousBlockHash: self.previousBlockHash,
       });
 
+      self.hash = currentHash;
+
       // Comparing if the hashes changed
-      if (currentBlockHash === recalculatedHash) {
+      if (currentHash === newHash) {
         resolve(true);
       } else {
         resolve(false);
