@@ -122,10 +122,12 @@ class Blockchain {
       }
 
       if (!message) {
-        reject(new Error("Invalid message"));
+        reject(new Error("Message is empty"));
       }
 
-      bitcoinMessage.verify(message, address, signature);
+      if (!bitcoinMessage.verify(message, address, signature)) {
+        reject("Invalid message");
+      }
 
       const block = await self._addBlock(
         new BlockClass.Block({ star, owner: address })
