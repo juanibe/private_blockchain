@@ -71,6 +71,10 @@ class Blockchain {
       block.hash = SHA256(JSON.stringify(block)).toString();
       this.chain.push(block);
       self.height++;
+      const validationErrors = await this.validateChain();
+      if (validationErrors.length > 0) {
+        reject(validationErrors);
+      }
       resolve(block);
     });
   }
@@ -200,7 +204,7 @@ class Blockchain {
     let errorLog = [];
     return new Promise(async (resolve, reject) => {
       for (let i = 1; i < self.chain.length; i++) {
-        if (self.chain[i].hash !== self.chain[i - 1]) {
+        if (self.chain[i].previousBlockHash !== self.chain[i - 1].hash) {
           errorLog.push(
             "Invalid chain. Invalid hash for block:",
             self.chain[i].height
